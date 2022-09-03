@@ -1,0 +1,33 @@
+{viewName:'S3_Writer', initialCollection:'Movies', pipeline:
+    [{$match: {
+        totalvotes: {
+         $gt: 10000
+        }
+       }}, {$sort: {
+        rating: -1,
+        _id: 1
+       }}, {$limit: 1000}, {$lookup: {
+        from: 'MoviesDenorm',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'movieData'
+       }}, {$unwind: {
+        path: '$movieData'
+       }}, {$unwind: {
+        path: '$movieData.writers'
+       }}, {$lookup: {
+        from: 'People',
+        localField: 'movieData.writers',
+        foreignField: '_id',
+        as: 'writerData'
+       }}, {$unwind: {
+        path: '$writerData'
+       }}, {$group: {
+        _id: '$movieData.writers',
+        written: {
+         $push: '$_id'
+        },
+        name: {
+         $max: '$writerData.name'
+        }
+       }}]}

@@ -1,0 +1,38 @@
+{viewName:'S1_Director', initialCollection:'Movies', pipeline:
+    [{$match: {
+        genres: 'Comedy',
+        year: {
+         $gte: 1980,
+         $lte: 1989
+        }
+       }}, {$lookup: {
+        from: 'MoviesDenorm',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'movieData'
+       }}, {$unwind: {
+        path: '$movieData'
+       }}, {$unwind: {
+        path: '$movieData.directors'
+       }}, {$lookup: {
+        from: 'People',
+        localField: 'movieData.directors',
+        foreignField: '_id',
+        as: 'directorData'
+       }}, {$unwind: {
+        path: '$directorData'
+       }}, {$group: {
+        _id: '$directorData._id',
+        directed: {
+         $push: '$_id'
+        },
+        name: {
+         $max: '$directorData.name'
+        },
+        byear: {
+         $max: '$directorData.byear'
+        },
+        dyear: {
+         $max: '$directorData.dyear'
+        }
+       }}]}

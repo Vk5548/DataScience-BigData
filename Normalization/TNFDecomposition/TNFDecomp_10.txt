@@ -1,0 +1,7 @@
+r(genre, movieid)
+r(genre, runtime, title)
+r(runtime, title, year)
+r(genre, genreid)
+r(genreid, runtime, title)
+r(movieid, runtime, title)
+r(isadult, title)

@@ -1,0 +1,3 @@
+course -> credits, department, title
+course, section, semester, year -> building, room
+building, room -> capacity

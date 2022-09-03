@@ -1,0 +1,12 @@
+CREATE VIEW Person_G AS
+Select max(name) as name, max(alive) as alive
+from(
+SELECT id, name, if(dyear is null, 1, 0) as alive
+FROM s1_Director
+union 
+SELECT id, name, null as alive
+FROM s2_producer
+union 
+SELECT id, name, null as alive
+FROM s3_writer) as X
+group by id

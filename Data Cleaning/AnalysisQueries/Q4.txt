@@ -1,0 +1,39 @@
+select (select min(rating) from @@View@@) as minimum, (select max(rating) from @@View@@) as maximum,
+ truncate(round(median, 2),2) as median, qone, qthree
+from
+ (select yk + alpha * (ykPlusOne - yk) as median
+ from (select rating as yk from @@View@@
+ where position = 
+ (select truncate(0.5 * (count(*) + 1), 0) as k from @@View@@) ) as B ,
+ (select rating as ykPlusOne from @@View@@
+ where position = 
+ (select truncate(0.5 * (count(*) + 1), 0) as k from @@View@@)  + 1) as Y,
+ (select (j - k) as alpha
+ from (select round(0.5 * (count(*) + 1), 0) as j from @@View@@) as A,
+ (select truncate(0.5 * (count(*) + 1), 0) as k from @@View@@) as c) as Z) as x,
+ (select yk + alpha * (ykPlusOne - yk) as qone
+ from (select rating as yk from @@View@@
+ where position = 
+ (select truncate(0.25 * (count(*) + 1), 0) as k from @@View@@) ) as B1 ,
+ (select rating as ykPlusOne from @@View@@
+ where position = 
+ (select truncate(0.25 * (count(*) + 1), 0) as k from @@View@@)  + 1) as Y1,
+ (select (j - k) as alpha
+ from (select round(0.25 * (count(*) + 1), 0) as j from @@View@@) as A1,
+ (select truncate(0.25 * (count(*) + 1), 0) as k from @@View@@) as c1) as Z1) as x1,
+ (select yk + alpha * (ykPlusOne - yk) as qthree
+ from (select rating as yk from @@View@@
+ where position = 
+ (select truncate(0.75 * (count(*) + 1), 0) as k from @@View@@) ) as B2 ,
+ (select rating as ykPlusOne from @@View@@
+ where position = 
+ (select truncate(0.75 * (count(*) + 1), 0) as k from @@View@@)  + 1) as Y2,
+ (select (j - k) as alpha
+ from (select round(0.75 * (count(*) + 1), 0) as j from @@View@@) as A2,
+ (select truncate(0.75 * (count(*) + 1), 0) as k from @@View@@) as c2) as Z2) as x2;
+ 
+
+ 
+ 
+
+

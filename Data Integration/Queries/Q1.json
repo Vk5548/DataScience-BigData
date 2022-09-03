@@ -1,0 +1,52 @@
+{initialCollection:'Movie_G_Coll', pipeline:
+    [{$match: {
+        $or: [
+         {
+          alive: true
+         },
+         {
+          alive: null
+         }
+        ]
+       }}, {$lookup: {
+        from: 'Participated_G_Coll',
+        localField: 'name',
+        foreignField: 'name',
+        as: 'participationData'
+       }}, {$unwind: {
+        path: '$participationData'
+       }}, {$match: {
+        $or: [
+         {
+          'participationData.roles': 'Producer'
+         },
+         {
+          'participationData.roles': 'Director'
+         }
+        ]
+       }}, {$lookup: {
+        from: 'Movie_G_Coll',
+        localField: 'participationData.ptitle',
+        foreignField: 'ptitle',
+        as: 'movieData'
+       }}, {$unwind: {
+        path: '$movieData'
+       }}, {$match: {
+        'movieData.year': {
+         $gte: 1985,
+         $lte: 1993
+        }
+       }}, {$group: {
+        _id: '$participationData.name',
+        cnt: {
+         $sum: 1
+        }
+       }}, {$match: {
+        cnt: {
+         $gt: 2
+        }
+       }}, {$project: {
+        name: '$_id',
+        cnt: 1,
+        _id: 0
+       }}]}

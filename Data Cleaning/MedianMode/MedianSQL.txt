@@ -1,0 +1,12 @@
+
+
+select yk + alpha * (ykPlusOne - yk) as median
+ from (select attribute as yk from @@Relation@@
+ where position = 
+ (select truncate(@@p@@ * (count(*) + 1), 0) as k from @@Relation@@) ) as B ,
+ (select attribute as ykPlusOne from @@Relation@@
+ where position = 
+ (select truncate(@@p@@ * (count(*) + 1), 0) as k from @@Relation@@)  + 1) as Y,
+ (select (j - k) as alpha
+ from (select round(@@p@@ * (count(*) + 1), 0) as j from @@Relation@@) as A,
+ (select truncate(@@p@@ * (count(*) + 1), 0) as k from @@Relation@@) as c) as Z

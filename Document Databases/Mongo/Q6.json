@@ -1,0 +1,68 @@
+{initialCollection:'PeopleDenorm', pipeline:[{$match: {
+    'written.15': {
+     $exists: true
+    },
+    'directed.1': {
+     $exists: true
+    }
+   }}, {$lookup: {
+    from: 'People',
+    localField: '_id',
+    foreignField: '_id',
+    as: 'p'
+   }}, {$unwind: {
+    path: '$p'
+   }}, {$match: {
+    'p.dyear': {
+     $exists: false
+    }
+   }}, {$lookup: {
+    from: 'Movies',
+    localField: 'written',
+    foreignField: '_id',
+    as: 'm'
+   }}, {$unwind: {
+    path: '$m'
+   }}, {$match: {
+    'm.genres': 'Romance'
+   }}, {$group: {
+    _id: '$_id',
+    count: {
+     $sum: 1
+    }
+   }}, {$match: {
+    count: {
+     $gt: 15
+    }
+   }}, {$lookup: {
+    from: 'PeopleDenorm',
+    localField: '_id',
+    foreignField: '_id',
+    as: 'pd2'
+   }}, {$unwind: {
+    path: '$pd2'
+   }}, {$match: {
+    'pd2.directed.1': {
+     $exists: true
+    }
+   }}, {$lookup: {
+    from: 'Movies',
+    localField: 'pd2.directed',
+    foreignField: '_id',
+    as: 'm'
+   }}, {$unwind: {
+    path: '$m'
+   }}, {$match: {
+    'm.genres': 'Sci-Fi'
+   }}, {$group: {
+    _id: '$_id',
+    count: {
+     $sum: 1
+    }
+   }}, {$match: {
+    count: {
+     $gt: 1
+    }
+   }}, {$project: {
+    count: 0
+   }}]}

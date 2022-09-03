@@ -1,0 +1,7 @@
+Select prsn.name, count(p.ptitle) as cnt
+from Movie_G as m join Participated_G as p join Person_G as prsn
+on m.ptitle = p.ptitle and prsn.name = p.name
+where (year between 1985 and 1993) and (prsn.alive = 1 or prsn.alive is null)
+and (roles like '%Producer%' or  roles like '%Director%' )
+group by prsn.name
+having cnt > 2

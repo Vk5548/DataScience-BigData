@@ -1,0 +1,13 @@
+{viewName:'S1_Movie', initialCollection:'Movies', pipeline:
+    [{$match: {
+        genres: 'Comedy',
+        year: {
+         $gte: 1980,
+         $lte: 1989
+        }
+       }}, {$project: {
+        ptitle: 1,
+        rating: 1,
+        year: 1
+       }}
+]}

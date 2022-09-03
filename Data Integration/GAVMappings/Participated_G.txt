@@ -1,0 +1,12 @@
+CREATE VIEW Participated_G AS
+Select max(name) as name, max(ptitle) as ptitle, group_concat(roles) as roles
+from
+(SELECT d.id as pid, mid, ptitle, name, 'Director' as roles
+FROM S1_Movie as m join S1_director as d on m.id = d.mid
+union
+SELECT p.id as pid, mid, ptitle, name, 'Producer' as roles
+FROM S2_Movie as m join S2_Producer as p on m.id = p.mid
+union
+SELECT w.id as pid, mid, ptitle, name, 'Writer' as roles
+FROM S3_Movie as m join S3_writer as w on m.id = w.mid) as X
+group by pid, mid

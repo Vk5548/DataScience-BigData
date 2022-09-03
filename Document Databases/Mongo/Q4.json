@@ -1,0 +1,60 @@
+{initialCollection:'MoviesDenorm', pipeline:[{$match: {
+    'producers.1': {
+     $exists: true
+    }
+   }}, {$lookup: {
+    from: 'PeopleDenorm',
+    localField: 'producers',
+    foreignField: '_id',
+    as: 'pd'
+   }}, {$unwind: {
+    path: '$pd'
+   }}, {$match: {
+    'pd.acted': {
+     $exists: true
+    }
+   }}, {$lookup: {
+    from: 'People',
+    localField: 'pd._id',
+    foreignField: '_id',
+    as: 'p'
+   }}, {$unwind: {
+    path: '$p'
+   }}, {$match: {
+    'p.dyear': {
+     $exists: false
+    }
+   }}, {$lookup: {
+    from: 'Movies',
+    localField: '_id',
+    foreignField: '_id',
+    as: 'm'
+   }}, {$unwind: {
+    path: '$m'
+   }}, {$match: {
+    'm.genres.1': {
+     $exists: true
+    },
+    'm.totalvotes': {
+     $gt: 10000
+    },
+    'm.genres': 'Western'
+   }}, {$group: {
+    _id: '$_id',
+    count: {
+     $sum: 1
+    }
+   }}, {$match: {
+    count: {
+     $gte: 2
+    }
+   }}, {$lookup: {
+    from: 'Movies',
+    localField: '_id',
+    foreignField: '_id',
+    as: 'final'
+   }}, {$unwind: {
+    path: '$final'
+   }}, {$project: {
+    rating: '$final.rating'
+   }}]}

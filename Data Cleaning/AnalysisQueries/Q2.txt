@@ -1,0 +1,7 @@
+
+
+select count(*) as freq, rating, g.name as genre
+from movie as m join genre as g join moviegenre as mg on mg.mid = m.id and g.id = mg.gid
+where year between @@InitYear@@ and @@EndYear@@
+group by rating, genre
+having freq > @@Frequency@@

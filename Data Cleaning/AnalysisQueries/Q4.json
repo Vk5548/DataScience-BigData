@@ -1,0 +1,239 @@
+{initialCollection:'Movies', pipeline:
+    [{$match: {
+        genres: '@@Genre@@',
+        year: {
+         $lte: @@EndYear@@ ,
+         $gte: @@InitYear@@
+        }
+       }}, {$project: {
+        attribute: '$rating'
+       }}, {$sort: {
+        attribute: 1
+       }}, {$group: {
+        _id: null,
+        array: {
+         $push: '$attribute'
+        }
+       }}, {$project: {
+        kMedian: {
+         $trunc: {
+          $multiply: [
+           0.5,
+           {
+            $add: [
+             1,
+             {
+              $size: '$array'
+             }
+            ]
+           }
+          ]
+         }
+        },
+        kQOne: {
+         $trunc: {
+          $multiply: [
+           0.25,
+           {
+            $add: [
+             1,
+             {
+              $size: '$array'
+             }
+            ]
+           }
+          ]
+         }
+        },
+        kQThree: {
+         $trunc: {
+          $multiply: [
+           0.75,
+           {
+            $add: [
+             1,
+             {
+              $size: '$array'
+             }
+            ]
+           }
+          ]
+         }
+        },
+        array: 1
+       }}, {$project: {
+        alphaMedian: {
+         $subtract: [
+          {
+           $multiply: [
+            0.5,
+            {
+             $add: [
+              1,
+              {
+               $size: '$array'
+              }
+             ]
+            }
+           ]
+          },
+          '$kMedian'
+         ]
+        },
+        alphaQOne: {
+         $subtract: [
+          {
+           $multiply: [
+            0.25,
+            {
+             $add: [
+              1,
+              {
+               $size: '$array'
+              }
+             ]
+            }
+           ]
+          },
+          '$kQOne'
+         ]
+        },
+        alphaQThree: {
+         $subtract: [
+          {
+           $multiply: [
+            0.75,
+            {
+             $add: [
+              1,
+              {
+               $size: '$array'
+              }
+             ]
+            }
+           ]
+          },
+          '$kQThree'
+         ]
+        },
+        array: 1,
+        kMedian: 1,
+        kQOne: 1,
+        kQThree: 1
+       }}, {$project: {
+        ykMedian: {
+         $arrayElemAt: [
+          '$array',
+          '$kMedian'
+         ]
+        },
+        ykPlusOneMedian: {
+         $arrayElemAt: [
+          '$array',
+          {
+           $add: [
+            1,
+            '$kMedian'
+           ]
+          }
+         ]
+        },
+        ykQOne: {
+         $arrayElemAt: [
+          '$array',
+          '$kQOne'
+         ]
+        },
+        ykPlusOneQOne: {
+         $arrayElemAt: [
+          '$array',
+          {
+           $add: [
+            1,
+            '$kQOne'
+           ]
+          }
+         ]
+        },
+        ykQThree: {
+         $arrayElemAt: [
+          '$array',
+          '$kQThree'
+         ]
+        },
+        ykPlusOneQThree: {
+         $arrayElemAt: [
+          '$array',
+          {
+           $add: [
+            1,
+            '$kQThree'
+           ]
+          }
+         ]
+        },
+        array: 1,
+        kMedian: 1,
+        kQOne: 1,
+        kQThree: 1,
+        alphaMedian: 1,
+        alphaQOne: 1,
+        alphaQThree: 1
+       }}, {$project: {
+        median: {
+         $add: [
+          '$ykMedian',
+          {
+           $multiply: [
+            '$alphaMedian',
+            {
+             $subtract: [
+              '$ykPlusOneMedian',
+              '$ykMedian'
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        qone: {
+         $add: [
+          '$ykQOne',
+          {
+           $multiply: [
+            '$alphaQOne',
+            {
+             $subtract: [
+              '$ykPlusOneQOne',
+              '$ykQOne'
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        qthree: {
+         $add: [
+          '$ykQThree',
+          {
+           $multiply: [
+            '$alphaQThree',
+            {
+             $subtract: [
+              '$ykPlusOneQThree',
+              '$ykQThree'
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        minimum: {
+         $min: '$array'
+        },
+        maximum: {
+         $max: '$array'
+        },
+        _id: 0
+       }}]
+}

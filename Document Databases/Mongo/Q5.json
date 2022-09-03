@@ -1,0 +1,46 @@
+{initialCollection:'PeopleDenorm', pipeline:
+    [{$match: {
+        knownfor: {
+         $exists: true
+        },
+        'acted.1': {
+         $exists: true
+        }
+       }}, {$lookup: {
+        from: 'Movies',
+        localField: 'knownfor',
+        foreignField: '_id',
+        as: 'm'
+       }}, {$unwind: {
+        path: '$m'
+       }}, {$match: {
+        'm.genres': 'Sci-Fi'
+       }}, {$lookup: {
+        from: 'MoviesDenorm',
+        localField: 'm._id',
+        foreignField: '_id',
+        as: 'md'
+       }}, {$unwind: {
+        path: '$md'
+       }}, {$match: {
+        'md.directors.3': {
+         $exists: true
+        }
+       }}, {$lookup: {
+        from: 'People',
+        localField: 'md.directors',
+        foreignField: '_id',
+        as: 'p'
+       }}, {$unwind: {
+        path: '$p'
+       }}, {$group: {
+        _id: {
+         byear: '$p.byear',
+         dyear: '$p.dyear'
+        }
+       }}, {$group: {
+        _id: null,
+        count: {
+         $sum: 1
+        }
+       }}]}

@@ -1,0 +1,15 @@
+{viewName:'S3_Participated', initialCollection:'S3_Writer', pipeline:[{$lookup: {
+	from: 'S3_Movie_Coll',
+	localField: 'written',
+	foreignField: '_id',
+	as: 'movieInfo'
+   }}, {$unwind: {
+	path: '$movieInfo'
+   }}, {$project: {
+	_id: 0,
+	pid: '$_id',
+	mid: '$movieInfo._id',
+	name: 1,
+	ptitle: '$movieInfo.ptitle',
+	role: 'Writer'
+   }}]}

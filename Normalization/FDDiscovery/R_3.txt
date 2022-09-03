@@ -1,0 +1,16 @@
+dirid, title -> movieid
+movieid -> title
+movieid -> year
+title -> adult
+dirid, title -> year
+dirid -> dirname
+dirname, title -> year
+dirname, runtime -> dirid
+dirname, title -> movieid
+movieid -> adult
+movieid -> dirname
+dirname, title -> runtime
+movieid -> dirid
+movieid -> runtime
+dirname, title -> dirid
+dirid, title -> runtime

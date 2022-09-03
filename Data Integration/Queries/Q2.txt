@@ -1,0 +1,4 @@
+select totalvotes
+from participated_g as pg join movie_g as m 
+on pg.ptitle = m.ptitle
+where genres like '%Action%' and pg.name like 'Lee%' and totalvotes is not null

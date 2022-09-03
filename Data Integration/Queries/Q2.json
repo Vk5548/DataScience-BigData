@@ -1,0 +1,24 @@
+{initialCollection:'Participated_G_Coll', pipeline:
+    [{$match: {
+        name: {
+         $regex: '^Lee'
+        }
+       }}, {$lookup: {
+        from: 'Movie_G_Coll',
+        localField: 'ptitle',
+        foreignField: 'ptitle',
+        as: 'movieD'
+       }}, {$unwind: {
+        path: '$movieD'
+       }}, {$match: {
+        'movieD.genres': 'Action'
+       }}, {$match: {
+        'movieD.totalvotes': {
+         $exists: true
+        }
+       }}, {$project: {
+        totalvotes: '$movieD.totalvotes',
+        _id: 0
+       }}]
+}
+

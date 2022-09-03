@@ -1,0 +1,5 @@
+CREATE VIEW S1_Movie AS
+SELECT m.id as id, ptitle, year, rating
+FROM movie as m join genre as g join moviegenre as mg on mg.mid = m.id and mg.gid = g.id
+where g.name = 'Comedy' and m.year between 1980 and 1989
+    

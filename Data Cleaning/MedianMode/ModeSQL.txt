@@ -1,0 +1,6 @@
+Select attribute, count(*) as result
+from @@Relation@@
+group by attribute
+having result >= All(Select  count(*) as result
+from @@Relation@@
+group by attribute)
